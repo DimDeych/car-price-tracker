@@ -2,6 +2,17 @@
 import { Navigation } from "@/components/Navigation";
 import { Heart } from "lucide-react";
 import { useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
 
 const Listing = () => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -36,6 +47,24 @@ const Listing = () => {
       rating: 4.8
     }
   };
+
+  // Примерные данные для графиков
+  const priceHistoryData = [
+    { month: "Янв", price: 78000 },
+    { month: "Фев", price: 77000 },
+    { month: "Мар", price: 76000 },
+    { month: "Апр", price: 75000 },
+    { month: "Май", price: 75000 },
+    { month: "Июн", price: 75000 },
+  ];
+
+  const similarListingsData = [
+    { price: 70000, count: 3 },
+    { price: 75000, count: 5 },
+    { price: 80000, count: 4 },
+    { price: 85000, count: 2 },
+    { price: 90000, count: 1 },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -98,6 +127,49 @@ const Listing = () => {
                       <span>{feature}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Аналитика */}
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">История цены</h2>
+                  <div className="bg-white p-4 rounded-xl border h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={priceHistoryData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Line
+                          type="monotone"
+                          dataKey="price"
+                          stroke="#4F46E5"
+                          strokeWidth={2}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">Похожие предложения</h2>
+                  <div className="bg-white p-4 rounded-xl border h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={similarListingsData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="price" tickFormatter={(value) => `€${value.toLocaleString()}`} />
+                        <YAxis />
+                        <Tooltip
+                          formatter={(value, name) => [
+                            name === "count" ? `${value} объявл.` : `€${value.toLocaleString()}`,
+                            name === "count" ? "Количество" : "Цена"
+                          ]}
+                        />
+                        <Bar dataKey="count" fill="#4F46E5" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
