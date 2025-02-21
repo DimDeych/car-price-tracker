@@ -1,10 +1,10 @@
-
-import { Search } from "lucide-react";
+import { Search, Heart } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { useState, useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
 interface Car {
   id: number;
@@ -38,9 +38,9 @@ const Index = () => {
     mileageMin: "",
     mileageMax: "",
   });
+  const [likedCars, setLikedCars] = useState<Set<number>>(new Set());
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Примерные данные для фильтров
   const carBrands = ["BMW", "Mercedes-Benz", "Audi", "Volkswagen", "Toyota", "Honda"];
   const cities = ["Берлин", "Мюнхен", "Гамбург", "Франкфурт", "Штутгарт", "Кёльн"];
   const models = {
@@ -52,10 +52,8 @@ const Index = () => {
     "Honda": ["Civic", "Accord", "CR-V", "Pilot", "HR-V"]
   };
 
-  // Имитация загрузки данных с сервера
   const fetchCars = async ({ pageParam = 0 }) => {
-    // В реальном приложении здесь был бы API запрос с фильтрами
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Имитация задержки сети
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const itemsPerPage = 6;
     const mockData: Car[] = Array.from({ length: itemsPerPage }, (_, i) => ({
@@ -71,7 +69,7 @@ const Index = () => {
     return {
       cars: mockData,
       nextPage: pageParam + 1,
-      hasMore: pageParam < 5 // Ограничим количество страниц для демо
+      hasMore: pageParam < 5
     };
   };
 
@@ -89,7 +87,6 @@ const Index = () => {
     initialPageParam: 0
   });
 
-  // Наблюдатель для бесконечной прокрутки
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -107,9 +104,26 @@ const Index = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Обработчик изменения фильтров
   const handleFilterChange = (newFilters: Partial<Filters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+
+  const handleLike = (carId: number) => {
+    setLikedCars(prev => {
+      const newLikedCars = new Set(prev);
+      if (newLikedCars.has(carId)) {
+        newLikedCars.delete(carId);
+        toast({
+          description: "Автомобиль удален из избранного",
+        });
+      } else {
+        newLikedCars.add(carId);
+        toast({
+          description: "Автомобиль добавлен в избранное",
+        });
+      }
+      return newLikedCars;
+    });
   };
 
   return (
@@ -122,7 +136,7 @@ const Index = () => {
             Найдите идеальный автомобиль
           </h1>
           <p className="text-gray-600 mb-8">
-            Отслеживайте цены и находите лучшие предложения на рынке
+            Отслеживай цены и находите лучшие предложения на рынке
           </p>
           
           <div className="bg-white rounded-2xl shadow-sm border p-6">
@@ -134,7 +148,7 @@ const Index = () => {
                   onChange={(e) => {
                     handleFilterChange({ 
                       brand: e.target.value,
-                      model: "" // Сброс модели при смене бренда
+                      model: "" 
                     });
                   }}
                   className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
@@ -222,7 +236,6 @@ const Index = () => {
           <h2 className="text-2xl font-semibold mb-8">Найденные автомобили</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
-              // Скелетон загрузки
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-lg border border-gray-100 overflow-hidden">
                   <Skeleton className="aspect-video" />
@@ -242,6 +255,19 @@ const Index = () => {
                   >
                     <div className="aspect-video bg-gray-100 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 z-10 bg-white/80 backdrop-blur-sm hover:bg-white/90"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleLike(car.id);
+                        }}
+                      >
+                        <Heart
+                          className={likedCars.has(car.id) ? "fill-red-500 text-red-500" : "text-gray-500"}
+                        />
+                      </Button>
                     </div>
                     <div className="p-4">
                       <div className="text-sm text-gray-500">{car.brand}</div>
@@ -255,7 +281,6 @@ const Index = () => {
             )}
           </div>
           
-          {/* Индикатор загрузки следующей страницы */}
           {(isFetchingNextPage || hasNextPage) && (
             <div 
               ref={loadMoreRef}
