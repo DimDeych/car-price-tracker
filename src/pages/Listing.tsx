@@ -1,27 +1,19 @@
 import { Navigation } from "@/components/Navigation";
-import { Heart, Scale } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { ImageGallery } from "@/components/ImageGallery";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
+import { ListingHeader } from "@/components/listing/ListingHeader";
+import { ListingDetails } from "@/components/listing/ListingDetails";
+import { ListingFeatures } from "@/components/listing/ListingFeatures";
+import { ListingAnalytics } from "@/components/listing/ListingAnalytics";
+import { ListingSidebar } from "@/components/listing/ListingSidebar";
+import { useComparisonList, type ListingItem } from "@/utils/comparison";
 
 const Listing = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInComparison, setIsInComparison] = useState(false);
   const { toast } = useToast();
 
-  // Демо-изображения для галереи
+  // Demo images for gallery
   const demoImages = [
     "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
     "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
@@ -29,9 +21,9 @@ const Listing = () => {
     "https://images.unsplash.com/photo-1502877338535-766e1452684a",
   ];
 
-  // В реальном приложении эти данные будут загружаться с сервера
-  const listing = {
-    id: 1, // добавлено для работы с системой сравнения
+  // In a real app, this data would be loaded from the server
+  const listing: ListingItem = {
+    id: 1,
     brand: "Mercedes-Benz",
     model: "E-Class",
     year: 2023,
@@ -61,32 +53,22 @@ const Listing = () => {
     }
   };
 
+  const { isInComparison: checkComparison, toggleComparison: toggleComparisonUtil } = useComparisonList(listing.id);
+
   useEffect(() => {
-    const comparisonList = JSON.parse(localStorage.getItem("comparisonList") || "[]");
-    setIsInComparison(comparisonList.some((car: any) => car.id === listing.id));
+    setIsInComparison(checkComparison());
   }, [listing.id]);
 
   const toggleComparison = () => {
-    const comparisonList = JSON.parse(localStorage.getItem("comparisonList") || "[]");
-    
-    if (isInComparison) {
-      const newList = comparisonList.filter((car: any) => car.id !== listing.id);
-      localStorage.setItem("comparisonList", JSON.stringify(newList));
-      setIsInComparison(false);
+    toggleComparisonUtil(listing, (isInList) => {
+      setIsInComparison(isInList);
       toast({
-        description: "Автомобиль удален из сравнения",
+        description: isInList ? "Автомобиль добавлен в сравнение" : "Автомобиль удален из сравнения",
       });
-    } else {
-      const newList = [...comparisonList, listing];
-      localStorage.setItem("comparisonList", JSON.stringify(newList));
-      setIsInComparison(true);
-      toast({
-        description: "Автомобиль добавлен в сравнение",
-      });
-    }
+    });
   };
 
-  // Примерные данные для графиков
+  // Example data for charts
   const priceHistoryData = [
     { month: "Янв", price: 78000 },
     { month: "Фев", price: 77000 },
@@ -110,146 +92,25 @@ const Listing = () => {
       
       <main className="pt-24 container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          <div className="relative mb-8">
-            <ImageGallery 
-              images={demoImages}
-              aspectRatio={16/9}
-              className="rounded-2xl overflow-hidden"
-            />
-            <div className="absolute top-4 right-4 flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="bg-white/90 backdrop-blur-sm hover:bg-white/95"
-                onClick={() => setIsFavorite(!isFavorite)}
-              >
-                <Heart className={isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="bg-white/90 backdrop-blur-sm hover:bg-white/95"
-                onClick={toggleComparison}
-              >
-                <Scale className={isInComparison ? "text-primary" : "text-gray-600"} />
-              </Button>
-            </div>
-          </div>
+          <ListingHeader
+            images={demoImages}
+            isFavorite={isFavorite}
+            isInComparison={isInComparison}
+            onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+            onComparisonToggle={toggleComparison}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Основная информация */}
             <div className="lg:col-span-2 space-y-8">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">
-                  {listing.brand} {listing.model} {listing.year}
-                </h1>
-                <div className="text-2xl text-primary font-semibold">
-                  €{listing.price.toLocaleString()}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-xl border">
-                  <div className="text-sm text-gray-500">Пробег</div>
-                  <div className="font-medium">{listing.mileage.toLocaleString()} км</div>
-                </div>
-                <div className="bg-white p-4 rounded-xl border">
-                  <div className="text-sm text-gray-500">Двигатель</div>
-                  <div className="font-medium">{listing.engine.power}</div>
-                </div>
-                <div className="bg-white p-4 rounded-xl border">
-                  <div className="text-sm text-gray-500">Коробка</div>
-                  <div className="font-medium">{listing.transmission}</div>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Описание</h2>
-                <p className="text-gray-600 leading-relaxed">
-                  {listing.description}
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Комплектация</h2>
-                <div className="grid grid-cols-2 gap-2">
-                  {listing.features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Аналитика */}
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">История цены</h2>
-                  <div className="bg-white p-4 rounded-xl border h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={priceHistoryData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line
-                          type="monotone"
-                          dataKey="price"
-                          stroke="#4F46E5"
-                          strokeWidth={2}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Похожие предложения</h2>
-                  <div className="bg-white p-4 rounded-xl border h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={similarListingsData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="price" tickFormatter={(value) => `€${value.toLocaleString()}`} />
-                        <YAxis />
-                        <Tooltip
-                          formatter={(value, name) => [
-                            name === "count" ? `${value} объявл.` : `€${value.toLocaleString()}`,
-                            name === "count" ? "Количество" : "Цена"
-                          ]}
-                        />
-                        <Bar dataKey="count" fill="#4F46E5" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+              <ListingDetails {...listing} />
+              <ListingFeatures description={listing.description} features={listing.features} />
+              <ListingAnalytics
+                priceHistoryData={priceHistoryData}
+                similarListingsData={similarListingsData}
+              />
             </div>
 
-            {/* Сайдбар с контактами */}
-            <div className="lg:col-span-1">
-              <div className="bg-white p-6 rounded-2xl border sticky top-24">
-                <div className="text-xl font-semibold mb-4">{listing.seller.name}</div>
-                <div className="flex items-center mb-4">
-                  <div className="text-sm bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    Рейтинг: {listing.seller.rating}/5
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="text-gray-600">
-                    <div className="text-sm mb-1">Телефон</div>
-                    <div className="font-medium">{listing.seller.phone}</div>
-                  </div>
-                  <div className="text-gray-600">
-                    <div className="text-sm mb-1">Местоположение</div>
-                    <div className="font-medium">{listing.location}</div>
-                  </div>
-                  <button className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                    Связаться с продавцом
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ListingSidebar seller={{ ...listing.seller, location: listing.location }} />
           </div>
         </div>
       </main>
