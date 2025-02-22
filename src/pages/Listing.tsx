@@ -1,7 +1,9 @@
 
 import { Navigation } from "@/components/Navigation";
-import { Heart } from "lucide-react";
-import { useState } from "react";
+import { Heart, Scale } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import {
   BarChart,
   Bar,
@@ -16,9 +18,12 @@ import {
 
 const Listing = () => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isInComparison, setIsInComparison] = useState(false);
+  const { toast } = useToast();
 
   // В реальном приложении эти данные будут загружаться с сервера
   const listing = {
+    id: 1, // добавлено для работы с системой сравнения
     brand: "Mercedes-Benz",
     model: "E-Class",
     year: 2023,
@@ -48,6 +53,31 @@ const Listing = () => {
     }
   };
 
+  useEffect(() => {
+    const comparisonList = JSON.parse(localStorage.getItem("comparisonList") || "[]");
+    setIsInComparison(comparisonList.some((car: any) => car.id === listing.id));
+  }, [listing.id]);
+
+  const toggleComparison = () => {
+    const comparisonList = JSON.parse(localStorage.getItem("comparisonList") || "[]");
+    
+    if (isInComparison) {
+      const newList = comparisonList.filter((car: any) => car.id !== listing.id);
+      localStorage.setItem("comparisonList", JSON.stringify(newList));
+      setIsInComparison(false);
+      toast({
+        description: "Автомобиль удален из сравнения",
+      });
+    } else {
+      const newList = [...comparisonList, listing];
+      localStorage.setItem("comparisonList", JSON.stringify(newList));
+      setIsInComparison(true);
+      toast({
+        description: "Автомобиль добавлен в сравнение",
+      });
+    }
+  };
+
   // Примерные данные для графиков
   const priceHistoryData = [
     { month: "Янв", price: 78000 },
@@ -72,16 +102,26 @@ const Listing = () => {
       
       <main className="pt-24 container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          {/* Галерея изображений */}
           <div className="aspect-[16/9] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
             <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-            <button
-              onClick={() => setIsFavorite(!isFavorite)}
-              className={`absolute top-4 right-4 p-3 rounded-full backdrop-blur-md 
-                ${isFavorite ? 'bg-primary/90 text-white' : 'bg-white/90 text-gray-600'}`}
-            >
-              <Heart className={isFavorite ? 'fill-current' : ''} size={24} />
-            </button>
+            <div className="absolute top-4 right-4 flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-white/90 backdrop-blur-sm hover:bg-white/95"
+                onClick={() => setIsFavorite(!isFavorite)}
+              >
+                <Heart className={isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-white/90 backdrop-blur-sm hover:bg-white/95"
+                onClick={toggleComparison}
+              >
+                <Scale className={isInComparison ? "text-primary" : "text-gray-600"} />
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
