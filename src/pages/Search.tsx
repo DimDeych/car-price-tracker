@@ -1,18 +1,15 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { Navigation } from "@/components/Navigation";
-import { useToast } from "@/components/ui/use-toast";
 import { CarFilters } from "@/components/CarFilters";
 import { CarList } from "@/components/CarList";
+import { useToast } from "@/components/ui/use-toast";
 import { useCars } from "@/hooks/useCars";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import type { Filters } from "@/types/car";
 
-const Index = () => {
+const Search = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = React.useState<Filters>({
     brand: "",
     model: "",
     city: "",
@@ -21,8 +18,8 @@ const Index = () => {
     mileageMin: "",
     mileageMax: "",
   });
-  const [likedCars, setLikedCars] = useState<Set<number>>(new Set());
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const [likedCars, setLikedCars] = React.useState<Set<number>>(new Set());
+  const loadMoreRef = React.useRef<HTMLDivElement>(null);
 
   const {
     data,
@@ -32,7 +29,7 @@ const Index = () => {
     isLoading,
   } = useCars(filters);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -76,29 +73,16 @@ const Index = () => {
       <Navigation />
       
       <main className="pt-24 container mx-auto px-4">
-        <section className="max-w-4xl mx-auto text-center animate-fadeIn">
-          <h1 className="text-4xl font-bold mb-6">
-            Найдите идеальный автомобиль
+        <section className="max-w-4xl mx-auto animate-fadeIn">
+          <h1 className="text-4xl font-bold mb-6 text-center">
+            Поиск автомобилей
           </h1>
-          <p className="text-gray-600 mb-8">
-            Отслеживай цены и находите лучшие предложения на рынке
-          </p>
           
           <CarFilters filters={filters} onFilterChange={handleFilterChange} />
-          
-          <div className="mt-6">
-            <Button 
-              size="lg"
-              onClick={() => navigate("/search")}
-              className="w-full md:w-auto"
-            >
-              Показать объявления
-            </Button>
-          </div>
         </section>
 
         <section className="mt-16">
-          <h2 className="text-2xl font-semibold mb-8">Рекомендации</h2>
+          <h2 className="text-2xl font-semibold mb-8">Результаты поиска</h2>
           <CarList
             cars={data?.pages.flatMap(page => page.cars) ?? []}
             likedCars={likedCars}
@@ -118,4 +102,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Search;
