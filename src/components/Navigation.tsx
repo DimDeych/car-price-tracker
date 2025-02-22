@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Search, User, Heart, BarChart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Navigation = () => {
   return (
@@ -21,9 +22,14 @@ export const Navigation = () => {
             <Link to="/analytics" className="nav-link">
               <BarChart size={20} />
             </Link>
-            <Link to="/profile" className="nav-link">
-              <User size={20} />
-            </Link>
+            <div className="ml-4 flex items-center space-x-2">
+              <Button variant="outline" asChild>
+                <Link to="/login">Войти</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/register">Регистрация</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
