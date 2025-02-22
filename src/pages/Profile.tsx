@@ -4,7 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
-import { User, Settings, Lock } from "lucide-react";
+import { User, heart, search, Lock } from "lucide-react";
 
 interface UserProfile {
   name: string;
@@ -130,7 +130,7 @@ const Profile = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-primary/10 rounded-full p-3">
-                  <Heart className="w-6 h-6 text-primary" />
+                  <heart className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold">Избранное</h2>
@@ -142,7 +142,7 @@ const Profile = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-primary/10 rounded-full p-3">
-                  <Search className="w-6 h-6 text-primary" />
+                  <search className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold">Поиски</h2>
@@ -158,3 +158,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
