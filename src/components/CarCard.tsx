@@ -2,7 +2,9 @@
 import React from 'react';
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "./ImageGallery";
 import type { Car } from '@/types/car';
+import { Link } from 'react-router-dom';
 
 interface CarCardProps {
   car: Car;
@@ -11,10 +13,19 @@ interface CarCardProps {
 }
 
 export const CarCard: React.FC<CarCardProps> = ({ car, isLiked, onLike }) => {
+  // Здесь мы используем временные изображения для демонстрации
+  const demoImages = [
+    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+    "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+  ];
+
   return (
-    <div className="group bg-white rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="aspect-video bg-gray-100 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+    <Link 
+      to={`/listing/${car.id}`} 
+      className="group bg-white rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+    >
+      <div className="relative">
+        <ImageGallery images={demoImages} aspectRatio={16/9} />
         <Button
           variant="ghost"
           size="icon"
@@ -33,6 +44,6 @@ export const CarCard: React.FC<CarCardProps> = ({ car, isLiked, onLike }) => {
         <div className="text-primary font-medium mt-2">€{car.price.toLocaleString()}</div>
         <div className="text-sm text-gray-500 mt-2">{car.location}</div>
       </div>
-    </div>
+    </Link>
   );
 };

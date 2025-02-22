@@ -1,9 +1,9 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Heart, Scale } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "@/components/ImageGallery";
 import {
   BarChart,
   Bar,
@@ -20,6 +20,14 @@ const Listing = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInComparison, setIsInComparison] = useState(false);
   const { toast } = useToast();
+
+  // Демо-изображения для галереи
+  const demoImages = [
+    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+    "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+    "https://images.unsplash.com/photo-1494905998402-395d579af36f",
+    "https://images.unsplash.com/photo-1502877338535-766e1452684a",
+  ];
 
   // В реальном приложении эти данные будут загружаться с сервера
   const listing = {
@@ -102,8 +110,12 @@ const Listing = () => {
       
       <main className="pt-24 container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          <div className="aspect-[16/9] bg-gray-100 rounded-2xl mb-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+          <div className="relative mb-8">
+            <ImageGallery 
+              images={demoImages}
+              aspectRatio={16/9}
+              className="rounded-2xl overflow-hidden"
+            />
             <div className="absolute top-4 right-4 flex gap-2">
               <Button
                 variant="ghost"
