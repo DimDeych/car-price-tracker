@@ -1,5 +1,13 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Check } from 'lucide-react';
 import type { Filters } from '@/types/car';
 
 interface SelectFilterProps {
@@ -21,21 +29,42 @@ export const SelectFilter: React.FC<SelectFilterProps> = ({
   disabled = false,
   placeholder = "Все"
 }) => {
+  const getCurrentValue = () => {
+    return value || placeholder;
+  };
+
   return (
     <div className="flex flex-col">
       <label className="text-sm text-gray-600 mb-2">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onFilterChange({ [filterKey]: e.target.value })}
-        className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
-        disabled={disabled}
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild disabled={disabled}>
+          <Button
+            variant="outline"
+            className="w-full justify-between bg-white hover:bg-gray-50"
+          >
+            {getCurrentValue()}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-full min-w-[200px]">
+          <DropdownMenuItem
+            onClick={() => onFilterChange({ [filterKey]: "" })}
+            className="flex items-center justify-between cursor-pointer"
+          >
+            {placeholder}
+            {!value && <Check className="h-4 w-4 ml-2" />}
+          </DropdownMenuItem>
+          {options.map((option) => (
+            <DropdownMenuItem
+              key={option}
+              onClick={() => onFilterChange({ [filterKey]: option })}
+              className="flex items-center justify-between cursor-pointer"
+            >
+              {option}
+              {value === option && <Check className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
-
