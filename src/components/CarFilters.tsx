@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { Filters } from '@/types/car';
 
 interface CarFiltersProps {
@@ -30,17 +30,17 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
   const colors = ["Белый", "Черный", "Серебристый", "Красный", "Синий"];
   const fuelTypes = ["Бензин", "Дизель", "Электро", "Гибрид"];
   const sortOptions = [
-    { value: "price-asc", label: "Цена: по возрастанию", icon: <ChevronUp className="mr-2 h-4 w-4" /> },
-    { value: "price-desc", label: "Цена: по убыванию", icon: <ChevronDown className="mr-2 h-4 w-4" /> },
-    { value: "mileage-asc", label: "Пробег: по возрастанию", icon: <ChevronUp className="mr-2 h-4 w-4" /> },
-    { value: "mileage-desc", label: "Пробег: по убыванию", icon: <ChevronDown className="mr-2 h-4 w-4" /> },
-    { value: "year-desc", label: "Год: сначала новые", icon: <ChevronDown className="mr-2 h-4 w-4" /> },
-    { value: "year-asc", label: "Год: сначала старые", icon: <ChevronUp className="mr-2 h-4 w-4" /> }
+    { value: "price-asc", label: "Цена: по возрастанию", icon: <ArrowUp className="mr-2 h-4 w-4" /> },
+    { value: "price-desc", label: "Цена: по убыванию", icon: <ArrowDown className="mr-2 h-4 w-4" /> },
+    { value: "mileage-asc", label: "Пробег: по возрастанию", icon: <ArrowUp className="mr-2 h-4 w-4" /> },
+    { value: "mileage-desc", label: "Пробег: по убыванию", icon: <ArrowDown className="mr-2 h-4 w-4" /> },
+    { value: "year-desc", label: "Год: сначала новые", icon: <ArrowDown className="mr-2 h-4 w-4" /> },
+    { value: "year-asc", label: "Год: сначала старые", icon: <ArrowUp className="mr-2 h-4 w-4" /> }
   ];
 
   const getCurrentSortIcon = () => {
     const currentSort = sortOptions.find(option => option.value === filters.sortBy);
-    return currentSort?.icon || <ChevronDown className="ml-2 h-4 w-4" />;
+    return currentSort?.icon || <ArrowUpDown className="ml-2 h-4 w-4" />;
   };
 
   const getCurrentSortLabel = () => {
@@ -68,10 +68,12 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="w-full justify-between bg-white hover:bg-gray-50"
               >
-                <span>{getCurrentSortLabel()}</span>
-                {getCurrentSortIcon()}
+                <span className="flex items-center gap-2">
+                  {getCurrentSortIcon()}
+                  {getCurrentSortLabel()}
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
@@ -79,7 +81,7 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
                 <DropdownMenuItem
                   key={option.value}
                   onClick={() => onFilterChange({ sortBy: option.value })}
-                  className="flex items-center"
+                  className="flex items-center cursor-pointer"
                 >
                   {option.icon}
                   {option.label}

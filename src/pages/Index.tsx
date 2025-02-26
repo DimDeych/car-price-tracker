@@ -20,6 +20,10 @@ const Index = () => {
     priceMax: "",
     mileageMin: "",
     mileageMax: "",
+    bodyType: "",
+    color: "",
+    fuelType: "",
+    sortBy: ""
   });
   const [likedCars, setLikedCars] = useState<Set<number>>(new Set());
   const loadMoreRef = useRef<HTMLDivElement>(null);
