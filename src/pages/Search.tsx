@@ -17,6 +17,10 @@ const Search = () => {
     priceMax: "",
     mileageMin: "",
     mileageMax: "",
+    bodyType: "",
+    color: "",
+    fuelType: "",
+    sortBy: ""
   });
   const [likedCars, setLikedCars] = React.useState<Set<number>>(new Set());
   const loadMoreRef = React.useRef<HTMLDivElement>(null);

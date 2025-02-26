@@ -8,6 +8,9 @@ export interface Car {
   mileage: number;
   location: string;
   imageUrl?: string;
+  bodyType: string;
+  color: string;
+  fuelType: string;
 }
 
 export interface Filters {
@@ -18,4 +21,8 @@ export interface Filters {
   priceMax: string;
   mileageMin: string;
   mileageMax: string;
+  bodyType: string;
+  color: string;
+  fuelType: string;
+  sortBy: string;
 }

@@ -18,10 +18,50 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
     "Toyota": ["Camry", "Corolla", "RAV4", "Land Cruiser", "Highlander"],
     "Honda": ["Civic", "Accord", "CR-V", "Pilot", "HR-V"]
   };
+  const bodyTypes = ["Седан", "Хэтчбек", "Универсал", "Внедорожник", "Купе"];
+  const colors = ["Белый", "Черный", "Серебристый", "Красный", "Синий"];
+  const fuelTypes = ["Бензин", "Дизель", "Электро", "Гибрид"];
+  const sortOptions = [
+    { value: "price-asc", label: "Цена: по возрастанию" },
+    { value: "price-desc", label: "Цена: по убыванию" },
+    { value: "mileage-asc", label: "Пробег: по возрастанию" },
+    { value: "mileage-desc", label: "Пробег: по убыванию" },
+    { value: "year-desc", label: "Год: сначала новые" },
+    { value: "year-asc", label: "Год: сначала старые" }
+  ];
+
+  React.useEffect(() => {
+    // Загружаем сохраненные фильтры при монтировании
+    const savedFilters = localStorage.getItem('carSearchFilters');
+    if (savedFilters) {
+      onFilterChange(JSON.parse(savedFilters));
+    }
+  }, []);
+
+  React.useEffect(() => {
+    // Сохраняем фильтры при их изменении
+    localStorage.setItem('carSearchFilters', JSON.stringify(filters));
+  }, [filters]);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-2">Сортировка</label>
+          <select
+            value={filters.sortBy}
+            onChange={(e) => onFilterChange({ sortBy: e.target.value })}
+            className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+          >
+            <option value="">По умолчанию</option>
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex flex-col">
           <label className="text-sm text-gray-600 mb-2">Бренд</label>
           <select
@@ -66,6 +106,48 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
             <option value="">Все города</option>
             {cities.map((city) => (
               <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-2">Тип кузова</label>
+          <select
+            value={filters.bodyType}
+            onChange={(e) => onFilterChange({ bodyType: e.target.value })}
+            className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+          >
+            <option value="">Все типы</option>
+            {bodyTypes.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-2">Цвет</label>
+          <select
+            value={filters.color}
+            onChange={(e) => onFilterChange({ color: e.target.value })}
+            className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+          >
+            <option value="">Все цвета</option>
+            {colors.map((color) => (
+              <option key={color} value={color}>{color}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm text-gray-600 mb-2">Тип топлива</label>
+          <select
+            value={filters.fuelType}
+            onChange={(e) => onFilterChange({ fuelType: e.target.value })}
+            className="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+          >
+            <option value="">Все типы</option>
+            {fuelTypes.map((type) => (
+              <option key={type} value={type}>{type}</option>
             ))}
           </select>
         </div>
