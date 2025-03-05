@@ -4,13 +4,14 @@ import { Navigation } from "@/components/Navigation";
 import { CarList } from "@/components/CarList";
 import { useToast } from "@/hooks/use-toast";
 import { useCars } from "@/hooks/useCars";
+import type { Filters } from "@/types/car";
 
 const Favorites = () => {
   const { toast } = useToast();
   const [likedCars, setLikedCars] = React.useState<Set<number>>(new Set());
   const loadMoreRef = React.useRef<HTMLDivElement>(null);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useCars({
+  const filters: Filters = {
     brand: "",
     model: "",
     city: "",
@@ -18,7 +19,13 @@ const Favorites = () => {
     priceMax: "",
     mileageMin: "",
     mileageMax: "",
-  });
+    bodyType: "",
+    color: "",
+    fuelType: "",
+    sortBy: ""
+  };
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useCars(filters);
 
   const filteredCars = data?.pages.flatMap(page => 
     page.cars.filter(car => likedCars.has(car.id))

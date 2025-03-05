@@ -1,11 +1,21 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { CarFilters } from "@/components/CarFilters";
 import { CarList } from "@/components/CarList";
 import { useToast } from "@/components/ui/use-toast";
 import { useCars } from "@/hooks/useCars";
 import type { Filters } from "@/types/car";
+import { Button } from "@/components/ui/button";
+import { BookmarkPlus, Bookmark } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+
+interface SavedSearch {
+  id: string;
+  name: string;
+  filters: Filters;
+  createdAt: string;
+}
 
 const Search = () => {
   const { toast } = useToast();
@@ -23,6 +33,9 @@ const Search = () => {
     sortBy: ""
   });
   const [likedCars, setLikedCars] = React.useState<Set<number>>(new Set());
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchName, setSearchName] = useState("");
   const loadMoreRef = React.useRef<HTMLDivElement>(null);
 
   const {
@@ -72,17 +85,90 @@ const Search = () => {
     });
   };
 
+  const handleSaveSearch = () => {
+    if (!searchName.trim()) {
+      toast({
+        variant: "destructive",
+        description: "Введите название для поиска",
+      });
+      return;
+    }
+
+    const newSearch: SavedSearch = {
+      id: Date.now().toString(),
+      name: searchName,
+      filters: { ...filters },
+      createdAt: new Date().toISOString(),
+    };
+
+    setSavedSearches(prev => [...prev, newSearch]);
+    setIsDialogOpen(false);
+    setSearchName("");
+
+    toast({
+      description: "Поиск сохранен в избранное",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Navigation />
       
       <main className="pt-24 container mx-auto px-4">
         <section className="max-w-4xl mx-auto animate-fadeIn">
-          <h1 className="text-4xl font-bold mb-6 text-center">
-            Поиск автомобилей
-          </h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-4xl font-bold">
+              Поиск автомобилей
+            </h1>
+            
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <BookmarkPlus size={16} />
+                  Сохранить поиск
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Сохранить поиск</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                  <Input
+                    placeholder="Название поиска"
+                    value={searchName}
+                    onChange={(e) => setSearchName(e.target.value)}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    Отмена
+                  </Button>
+                  <Button onClick={handleSaveSearch}>
+                    Сохранить
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
           
           <CarFilters filters={filters} onFilterChange={handleFilterChange} />
+          
+          {savedSearches.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {savedSearches.map(search => (
+                <Button 
+                  key={search.id} 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setFilters(search.filters)}
+                >
+                  <Bookmark size={14} />
+                  {search.name}
+                </Button>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="mt-16">
