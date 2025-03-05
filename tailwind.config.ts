@@ -71,12 +71,27 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
+        pulseLight: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         fadeIn: "fadeIn 0.3s ease-out forwards",
         slideIn: "slideIn 0.3s ease-out forwards",
+        pulseLight: "pulseLight 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
+      boxShadow: {
+        'dropdown': '0 4px 12px rgba(0, 0, 0, 0.1)',
       },
     },
   },

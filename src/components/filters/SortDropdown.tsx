@@ -50,12 +50,12 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({ sortBy, onFilterChan
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
+        <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200 rounded-md z-50">
           {sortOptions.map((option) => (
             <DropdownMenuItem
               key={option.value}
               onClick={() => onFilterChange({ sortBy: option.value })}
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer hover:bg-gray-50"
             >
               {option.icon}
               {option.label}
@@ -66,4 +66,3 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({ sortBy, onFilterChan
     </div>
   );
 };
-

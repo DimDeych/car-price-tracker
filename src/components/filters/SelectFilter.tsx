@@ -45,10 +45,12 @@ export const SelectFilter: React.FC<SelectFilterProps> = ({
             {getCurrentValue()}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-full min-w-[200px]">
+        <DropdownMenuContent 
+          className="w-full min-w-[200px] bg-white shadow-lg border border-gray-200 rounded-md z-50"
+        >
           <DropdownMenuItem
             onClick={() => onFilterChange({ [filterKey]: "" })}
-            className="flex items-center justify-between cursor-pointer"
+            className="flex items-center justify-between cursor-pointer hover:bg-gray-50"
           >
             {placeholder}
             {!value && <Check className="h-4 w-4 ml-2" />}
@@ -57,7 +59,7 @@ export const SelectFilter: React.FC<SelectFilterProps> = ({
             <DropdownMenuItem
               key={option}
               onClick={() => onFilterChange({ [filterKey]: option })}
-              className="flex items-center justify-between cursor-pointer"
+              className="flex items-center justify-between cursor-pointer hover:bg-gray-50"
             >
               {option}
               {value === option && <Check className="h-4 w-4 ml-2" />}

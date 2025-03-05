@@ -44,4 +44,12 @@
   .nav-link {
     @apply p-2 text-gray-600 hover:text-gray-900 transition-colors;
   }
+  
+  .dropdown-content {
+    @apply bg-white z-50 border border-gray-200 shadow-dropdown rounded-md;
+  }
+  
+  .dropdown-item {
+    @apply px-2 py-1.5 hover:bg-gray-50 cursor-pointer text-sm rounded-sm;
+  }
 }
