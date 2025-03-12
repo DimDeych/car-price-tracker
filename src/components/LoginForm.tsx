@@ -4,41 +4,40 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { authService } from "@/services/authService";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      // Here you would typically make an API call to your backend
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await authService.login({ email, password });
+      
+      // Store tokens
+      localStorage.setItem('authToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('userEmail', email);
+      
+      toast({
+        description: "Вход выполнен успешно",
       });
-
-      if (response.ok) {
-        toast({
-          description: "Вход выполнен успешно",
-        });
-        navigate("/profile");
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Неверный email или пароль",
-        });
-      }
+      
+      navigate("/profile");
     } catch (error) {
+      console.error("Login error:", error);
       toast({
         variant: "destructive",
-        description: "Ошибка при входе",
+        description: "Неверный email или пароль",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,6 +50,7 @@ export const LoginForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
@@ -60,10 +60,11 @@ export const LoginForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
-      <Button type="submit" className="w-full">
-        Войти
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Загрузка..." : "Войти"}
       </Button>
     </form>
   );

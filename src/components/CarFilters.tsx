@@ -4,7 +4,8 @@ import type { Filters } from '@/types/car';
 import { SortDropdown } from './filters/SortDropdown';
 import { SelectFilter } from './filters/SelectFilter';
 import { RangeFilter } from './filters/RangeFilter';
-import { carBrands, cities, models, bodyTypes, colors, fuelTypes } from '@/utils/filterData';
+import { useMetadata } from '@/hooks/useMetadata';
+import { bodyTypes, colors, fuelTypes } from '@/utils/filterData';
 
 interface CarFiltersProps {
   filters: Filters;
@@ -12,6 +13,10 @@ interface CarFiltersProps {
 }
 
 export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange }) => {
+  // Fetch metadata from API
+  const { cities, brands, getModelsByBrand, isLoadingCities, isLoadingBrands } = useMetadata();
+  const modelsQuery = getModelsByBrand(filters.brand);
+  
   React.useEffect(() => {
     const savedFilters = localStorage.getItem('carSearchFilters');
     if (savedFilters) {
@@ -41,19 +46,20 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
         <SelectFilter
           label="Бренд"
           value={filters.brand}
-          options={carBrands}
+          options={brands}
           filterKey="brand"
           onFilterChange={handleBrandChange}
           placeholder="Все бренды"
+          disabled={isLoadingBrands}
         />
 
         <SelectFilter
           label="Модель"
           value={filters.model}
-          options={filters.brand ? models[filters.brand] : []}
+          options={modelsQuery.data || []}
           filterKey="model"
           onFilterChange={onFilterChange}
-          disabled={!filters.brand}
+          disabled={!filters.brand || modelsQuery.isLoading}
           placeholder="Все модели"
         />
 
@@ -64,6 +70,7 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
           filterKey="city"
           onFilterChange={onFilterChange}
           placeholder="Все города"
+          disabled={isLoadingCities}
         />
 
         <SelectFilter
@@ -114,4 +121,3 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
     </div>
   );
 };
-

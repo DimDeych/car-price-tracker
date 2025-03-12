@@ -4,42 +4,36 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { authService } from "@/services/authService";
 
 export const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      // Here you would typically make an API call to your backend
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, name }),
+      await authService.register({ email, password });
+      
+      toast({
+        description: "Регистрация успешна",
       });
-
-      if (response.ok) {
-        toast({
-          description: "Регистрация успешна",
-        });
-        navigate("/login");
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Ошибка при регистрации",
-        });
-      }
+      
+      navigate("/login");
     } catch (error) {
+      console.error("Registration error:", error);
       toast({
         variant: "destructive",
         description: "Ошибка при регистрации",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,6 +46,7 @@ export const RegisterForm = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
@@ -61,6 +56,7 @@ export const RegisterForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
@@ -70,10 +66,11 @@ export const RegisterForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
-      <Button type="submit" className="w-full">
-        Зарегистрироваться
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Загрузка..." : "Зарегистрироваться"}
       </Button>
     </form>
   );
