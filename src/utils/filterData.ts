@@ -1,7 +1,7 @@
 
 export const carBrands = ["BMW", "Mercedes-Benz", "Audi", "Volkswagen", "Toyota", "Honda"];
 
-export const cities = ["Берлин", "Мюнхен", "Гамбург", "Франкфурт", "Штутгарт", "Кёльн"];
+export const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Казань", "Новосибирск", "Краснодар"];
 
 export const models = {
   "BMW": ["3 Series", "5 Series", "7 Series", "X5", "X6"],

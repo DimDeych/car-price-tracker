@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,14 @@ export const CarCard: React.FC<CarCardProps> = ({ car, isLiked, onLike }) => {
     "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
     "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
   ];
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      maximumFractionDigits: 0
+    }).format(price);
+  };
 
   return (
     <Link 
@@ -41,7 +48,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car, isLiked, onLike }) => {
       <div className="p-4">
         <div className="text-sm text-gray-500">{car.brand}</div>
         <div className="font-semibold mt-1">{car.model} {car.year}</div>
-        <div className="text-primary font-medium mt-2">€{car.price.toLocaleString()}</div>
+        <div className="text-primary font-medium mt-2">{formatPrice(car.price)}</div>
         <div className="text-sm text-gray-500 mt-2">{car.location}</div>
       </div>
     </Link>

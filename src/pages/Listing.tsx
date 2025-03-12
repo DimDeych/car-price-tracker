@@ -21,15 +21,15 @@ const Listing = () => {
     "https://images.unsplash.com/photo-1502877338535-766e1452684a",
   ];
 
-  // In a real app, this data would be loaded from the server
+  // Demo listing with Russian location and rubles
   const listing: ListingItem = {
     id: 1,
     brand: "Mercedes-Benz",
     model: "E-Class",
     year: 2023,
-    price: 75000,
+    price: 6500000, // Updated to rubles
     mileage: 15000,
-    location: "Берлин",
+    location: "Москва",
     engine: {
       type: "Бензин",
       power: "245 л.с.",
@@ -48,7 +48,7 @@ const Listing = () => {
     ],
     seller: {
       name: "Автосалон Premium Cars",
-      phone: "+49 123 456789",
+      phone: "+7 123 456-78-90",
       rating: 4.8
     }
   };
@@ -68,22 +68,22 @@ const Listing = () => {
     });
   };
 
-  // Example data for charts
+  // Example data for charts with prices in rubles
   const priceHistoryData = [
-    { month: "Янв", price: 78000 },
-    { month: "Фев", price: 77000 },
-    { month: "Мар", price: 76000 },
-    { month: "Апр", price: 75000 },
-    { month: "Май", price: 75000 },
-    { month: "Июн", price: 75000 },
+    { month: "Янв", price: 6800000 },
+    { month: "Фев", price: 6700000 },
+    { month: "Мар", price: 6600000 },
+    { month: "Апр", price: 6500000 },
+    { month: "Май", price: 6500000 },
+    { month: "Июн", price: 6500000 },
   ];
 
   const similarListingsData = [
-    { price: 70000, count: 3 },
-    { price: 75000, count: 5 },
-    { price: 80000, count: 4 },
-    { price: 85000, count: 2 },
-    { price: 90000, count: 1 },
+    { price: 6000000, count: 3 },
+    { price: 6500000, count: 5 },
+    { price: 7000000, count: 4 },
+    { price: 7500000, count: 2 },
+    { price: 8000000, count: 1 },
   ];
 
   return (

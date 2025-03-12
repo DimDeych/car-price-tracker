@@ -1,15 +1,14 @@
 
-import React from 'react';
-import type { Filters } from '@/types/car';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface RangeFilterProps {
   label: string;
-  minValue: string;
-  maxValue: string;
-  minKey: keyof Filters;
-  maxKey: keyof Filters;
-  onFilterChange: (newFilters: Partial<Filters>) => void;
-  placeholder?: { min: string; max: string };
+  minValue?: number;
+  maxValue?: number;
+  minKey: string;
+  maxKey: string;
+  onFilterChange: (filters: Record<string, any>) => void;
 }
 
 export const RangeFilter: React.FC<RangeFilterProps> = ({
@@ -19,28 +18,42 @@ export const RangeFilter: React.FC<RangeFilterProps> = ({
   minKey,
   maxKey,
   onFilterChange,
-  placeholder = { min: "От", max: "До" }
 }) => {
+  const formatValue = (value: number | undefined) => {
+    if (value === undefined) return '';
+    if (minKey === 'priceMin' || maxKey === 'priceMax') {
+      return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB',
+        maximumFractionDigits: 0
+      }).format(value).replace('₽', '').trim();
+    }
+    return value.toString();
+  };
+
   return (
-    <div className="flex flex-col">
-      <label className="text-sm text-gray-600 mb-2">{label}</label>
-      <div className="flex space-x-2">
-        <input
-          type="number"
-          placeholder={placeholder.min}
-          value={minValue}
-          onChange={(e) => onFilterChange({ [minKey]: e.target.value })}
-          className="w-1/2 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          placeholder="От"
+          value={formatValue(minValue)}
+          onChange={(e) => {
+            const value = e.target.value.replace(/[^\d]/g, '');
+            onFilterChange({ [minKey]: value ? parseInt(value) : undefined });
+          }}
         />
-        <input
-          type="number"
-          placeholder={placeholder.max}
-          value={maxValue}
-          onChange={(e) => onFilterChange({ [maxKey]: e.target.value })}
-          className="w-1/2 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow"
+        <Input
+          type="text"
+          placeholder="До"
+          value={formatValue(maxValue)}
+          onChange={(e) => {
+            const value = e.target.value.replace(/[^\d]/g, '');
+            onFilterChange({ [maxKey]: value ? parseInt(value) : undefined });
+          }}
         />
       </div>
     </div>
   );
 };
-
