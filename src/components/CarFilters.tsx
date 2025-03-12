@@ -101,9 +101,13 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
         />
 
         <RangeFilter
-          label="Цена (€)"
-          minValue={filters.priceMin}
-          maxValue={filters.priceMax}
+          label="Цена (₽)"
+          minValue={typeof filters.priceMin === 'string' ? 
+            filters.priceMin === '' ? undefined : parseInt(filters.priceMin) : 
+            filters.priceMin}
+          maxValue={typeof filters.priceMax === 'string' ? 
+            filters.priceMax === '' ? undefined : parseInt(filters.priceMax) : 
+            filters.priceMax}
           minKey="priceMin"
           maxKey="priceMax"
           onFilterChange={onFilterChange}
@@ -111,8 +115,12 @@ export const CarFilters: React.FC<CarFiltersProps> = ({ filters, onFilterChange 
 
         <RangeFilter
           label="Пробег (км)"
-          minValue={filters.mileageMin}
-          maxValue={filters.mileageMax}
+          minValue={typeof filters.mileageMin === 'string' ? 
+            filters.mileageMin === '' ? undefined : parseInt(filters.mileageMin) : 
+            filters.mileageMin}
+          maxValue={typeof filters.mileageMax === 'string' ? 
+            filters.mileageMax === '' ? undefined : parseInt(filters.mileageMax) : 
+            filters.mileageMax}
           minKey="mileageMin"
           maxKey="mileageMax"
           onFilterChange={onFilterChange}

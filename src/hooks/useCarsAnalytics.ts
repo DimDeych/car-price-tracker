@@ -20,14 +20,17 @@ export interface AnalyticsData {
     max: number;
     average: number;
   };
-  priceDistribution: {
-    range: string;
-    count: number;
-  }[];
+  priceDistribution: Record<string, number>;
+  mileageDistribution: Record<string, number>;
+  bodyTypeDistribution: Record<string, number>;
+  cityDistribution: Record<string, number>;
+  topBrands: Record<string, number>;
+  topModels: Record<string, number>;
+  monthlyListings: Array<{ month: string; listings: number }>;
 }
 
-export const useCarsAnalytics = (filters: Filters) => {
-  const fetchAnalytics = async () => {
+export const useCarsAnalytics = (filters: Filters, timeRange: "month" | "quarter" | "year" = "month") => {
+  const fetchAnalytics = async (): Promise<AnalyticsData> => {
     // Имитация задержки запроса
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -56,12 +59,63 @@ export const useCarsAnalytics = (filters: Filters) => {
       average: 78500
     };
 
-    const priceDistribution = [
-      { range: "60k-70k", count: 2 },
-      { range: "70k-80k", count: 12 },
-      { range: "80k-90k", count: 6 },
-      { range: "90k-100k", count: 3 },
-      { range: "100k+", count: 1 }
+    const priceDistribution = {
+      "60k-70k": 2,
+      "70k-80k": 12,
+      "80k-90k": 6,
+      "90k-100k": 3,
+      "100k+": 1
+    };
+
+    const topBrands = {
+      "BMW": 25,
+      "Mercedes-Benz": 18,
+      "Audi": 15,
+      "Volkswagen": 12,
+      "Toyota": 10,
+      "Honda": 8
+    };
+
+    const topModels = {
+      "BMW 3 Series": 12,
+      "Mercedes-Benz C-Class": 10,
+      "Audi A4": 8,
+      "Volkswagen Golf": 7,
+      "Toyota Camry": 6
+    };
+
+    const mileageDistribution = {
+      "0-10000 км": 5,
+      "10000-50000 км": 18,
+      "50000-100000 км": 25,
+      "100000-150000 км": 15,
+      "150000+ км": 7
+    };
+
+    const bodyTypeDistribution = {
+      "Седан": 30,
+      "Внедорожник": 25,
+      "Хэтчбек": 15,
+      "Универсал": 10,
+      "Купе": 5
+    };
+
+    const cityDistribution = {
+      "Москва": 35,
+      "Санкт-Петербург": 25,
+      "Екатеринбург": 15,
+      "Казань": 10,
+      "Новосибирск": 8,
+      "Краснодар": 7
+    };
+
+    const monthlyListings = [
+      { month: "Янв", listings: 120 },
+      { month: "Фев", listings: 135 },
+      { month: "Мар", listings: 140 },
+      { month: "Апр", listings: 150 },
+      { month: "Май", listings: 160 },
+      { month: "Июн", listings: 175 },
     ];
 
     // Фильтр по бренду, если он указан
@@ -90,7 +144,13 @@ export const useCarsAnalytics = (filters: Filters) => {
           max: Math.round(priceRange.max * brandMultiplier),
           average: Math.round(priceRange.average * brandMultiplier)
         },
-        priceDistribution
+        priceDistribution,
+        topBrands,
+        topModels,
+        mileageDistribution,
+        bodyTypeDistribution,
+        cityDistribution,
+        monthlyListings
       };
     }
 
@@ -98,12 +158,18 @@ export const useCarsAnalytics = (filters: Filters) => {
       priceHistory,
       similarListings,
       priceRange,
-      priceDistribution
+      priceDistribution,
+      topBrands,
+      topModels,
+      mileageDistribution,
+      bodyTypeDistribution,
+      cityDistribution,
+      monthlyListings
     };
   };
 
   return useQuery({
-    queryKey: ['carsAnalytics', filters],
+    queryKey: ['carsAnalytics', filters, timeRange],
     queryFn: fetchAnalytics
   });
 };

@@ -112,7 +112,7 @@ const Analytics = () => {
         ? "Кабриолет"
         : name === "pickup"
         ? "Пикап"
-        : "Другой",
+        : name,
     value,
   }));
 
