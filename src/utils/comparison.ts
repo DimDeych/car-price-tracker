@@ -46,7 +46,7 @@ export const useComparisonList = (listingId: number) => {
   return { isInComparison, toggleComparison };
 };
 
-// Add the missing formatCompactNumber function
+// Функция для форматирования чисел в компактный формат (1000 -> 1K)
 export const formatCompactNumber = (num: number): string => {
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`;
